@@ -3,6 +3,7 @@ package com.example.soo.controller;
 import com.example.common.page.SooPage;
 import com.example.common.response.Result;
 import com.example.common.response.ResultFactory;
+import com.example.soo.aop.CtrlAop;
 import com.example.soo.bean.entity.SysOperaLog;
 import com.example.soo.service.ISysOperaLogService;
 import io.swagger.annotations.Api;
@@ -34,6 +35,7 @@ public class SysOperaLogController {
             @ApiImplicitParam(name = "pageSize",value = "每页大小",required = false,defaultValue = "5"),
             @ApiImplicitParam(name = "userName",value = "用户名",required = false)
     })
+    @CtrlAop
     Result<SooPage<SysOperaLog>> pageSysOperaLog(
             @RequestParam(defaultValue = "1",required = false)Long pageIndex,
             @RequestParam(defaultValue = "5",required = false)Long pageSize,

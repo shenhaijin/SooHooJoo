@@ -42,6 +42,7 @@ import java.util.List;
 @Aspect
 @Component
 public class GloalAspect {
+    private static final String SYS_OPERA_PATH = "/sys/log/page";       //日志列表接口
     private static final String SUPER_ADMIN_FLAG = "1";         //  超级管理员标识
     private static final String ACCESS_TOKEN = "token";
     @Autowired
@@ -136,9 +137,12 @@ public class GloalAspect {
         try {
             ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
             HttpServletRequest httpServletRequest = servletRequestAttributes.getRequest();
-            String visitIp = getRealIp(httpServletRequest);
-            sysOperaLog.setVisitIp(visitIp);
-            sysOperaLogService.saveSysOperaLog(sysOperaLog);
+            String reqPath = httpServletRequest.getServletPath();
+            if(!SYS_OPERA_PATH.equals(reqPath)){
+                String visitIp = getRealIp(httpServletRequest);
+                sysOperaLog.setVisitIp(visitIp);
+                sysOperaLogService.saveSysOperaLog(sysOperaLog);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
