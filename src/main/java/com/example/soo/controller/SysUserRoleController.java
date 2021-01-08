@@ -5,12 +5,10 @@ import com.example.common.response.ResultFactory;
 import com.example.soo.aop.CtrlAop;
 import com.example.soo.bean.query.UserRoleUpdate;
 import com.example.soo.service.ISysUserRoleService;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Author shenhaijin
@@ -39,8 +37,9 @@ public class SysUserRoleController {
     }
     @DeleteMapping("delete")
     @ApiOperation(value = "删除用户角色",notes = "删除用户角色信息")
+    @ApiImplicitParam(name = "userRoleId",value = "用户角色关联Id",required = true)
     @CtrlAop
-    public Result<Boolean> deleteUserRole(String userRoleId) throws Exception{
+    public Result<Boolean> deleteUserRole(@RequestParam("userRoleId")String userRoleId) throws Exception{
         boolean deleteResult = sysUserRoleService.deleteUserRole(userRoleId);
         return ResultFactory.success(deleteResult);
     }

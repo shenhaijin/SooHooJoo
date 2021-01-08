@@ -27,18 +27,19 @@ public class SysUserController {
     @Autowired
     ISysUserService sysUserService;
 
-    @DeleteMapping("delete/{userId}")
+    @DeleteMapping("delete")
     @ApiOperation(value="删除用户",notes = "根据用户id删除用户，返回删除的用户信息")
+    @ApiImplicitParam(name = "userId",value = "用户Id",required = true)
     @CtrlAop
-    public Result<Boolean> deleteUser(
-            @ApiParam(name="userId",value = "用户Id",required = true) @PathVariable("userId") String userId) throws Exception {
+    public Result<Boolean> deleteUser( @RequestParam("userId") String userId) throws Exception {
         boolean deleteResult = sysUserService.deleteUser(userId);
         return ResultFactory.success(deleteResult);
     }
-    @GetMapping("detail/{userId}")
+    @GetMapping("detail")
     @ApiOperation(value="用户详情",notes = "根据用户Id查询用户详情")
+    @ApiImplicitParam(name = "userId",value = "用户Id",required = true)
     @CtrlAop
-    public Result<SysUser> detail(@ApiParam(name="userId",value = "用户Id",required = true) @PathVariable("userId") String userId)throws Exception{
+    public Result<SysUser> detail(@RequestParam("userId") String userId)throws Exception{
         SysUser queryUser = sysUserService.sel(userId);
         return ResultFactory.success(queryUser);
     }
