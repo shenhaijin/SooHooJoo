@@ -3,6 +3,7 @@ package com.example.common.base;
 import com.example.common.constant.Constant;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.util.ObjectUtils;
 
 /**
  * @Author shenhaijin
@@ -20,12 +21,16 @@ public class PageQueryBase {
         return pageSize;
     }
     public void setPageSize(Integer pageSize) {
-        this.pageSize = pageSize;
+        if(!ObjectUtils.isEmpty(pageSize)){
+            this.pageSize = pageSize;
+        }
     }
     public Integer getPageIndex() {
         return pageIndex;
     }
     public void setPageIndex(Integer pageIndex) {
-        this.pageIndex = pageIndex;
+        if(!ObjectUtils.isEmpty(pageIndex)){
+            this.pageIndex = pageIndex;
+        }
     }
 }
