@@ -44,7 +44,7 @@ public class SysMenuService implements ISysMenuService {
         if(!CollectionUtils.isEmpty(sysMenuList)){
             throw new ResultException("菜单名或菜单路径已存在！");
         }
-        SysMenu sysMenu = sysMenuBase.covertToSysMenu();
+        SysMenu sysMenu = sysMenuBase.covert();
         sysMenu.setCreateTime(new Date());
         sysMenu.setUpdateTime(sysMenu.getCreateTime());
         int number = sysMenuMapper.insert(sysMenu);
