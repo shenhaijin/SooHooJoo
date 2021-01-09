@@ -10,6 +10,7 @@ import com.example.soo.bean.entity.SysOperaLog;
 import com.example.soo.bean.entity.SysUser;
 import com.example.soo.exception.AuthException;
 import com.example.soo.exception.SooException;
+import com.example.soo.service.ISysMenuService;
 import com.example.soo.service.ISysUserService;
 import com.example.soo.service.impl.SysMenuService;
 import com.example.soo.service.impl.SysOperaLogService;
@@ -48,7 +49,7 @@ public class GloalAspect {
     @Autowired
     ISysUserService sysUserService;
     @Autowired
-    SysMenuService sysMenuService;
+    ISysMenuService sysMenuService;
     @Autowired
     SysOperaLogService sysOperaLogService;
     @Pointcut("execution(* com.example.soo.controller..*(..))")

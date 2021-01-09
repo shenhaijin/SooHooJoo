@@ -21,10 +21,20 @@ public class SysMenu {
     private String menuName;
     @TableField("menu_path")
     private String menuPath;
+    @TableField("menu_type")
+    private String menuType;
     @TableField("create_time")
     private Date createTime;
     @TableField("update_time")
     private Date updateTime;
+
+    public String getMenuType() {
+        return menuType;
+    }
+
+    public void setMenuType(String menuType) {
+        this.menuType = menuType;
+    }
 
     public String getId() {
         return id;
