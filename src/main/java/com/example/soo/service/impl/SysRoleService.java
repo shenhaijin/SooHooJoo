@@ -107,7 +107,7 @@ public class SysRoleService extends ServiceImpl<SysRoleMenuMapper,SysRoleMenu> i
         SooPage<SysRole> sooPage = ConvertUtil.mybatisConvertPage(sysRoleIPage);
         return sooPage;
     }
-
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteRole(String roleId) throws Exception {
         if(!StringUtils.isEmpty(roleId)){
