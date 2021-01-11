@@ -3,6 +3,7 @@ package com.example.soo.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.example.soo.bean.entity.SysMenu;
 import com.example.soo.bean.query.SysMenuBase;
+import com.example.soo.bean.query.SysMenuUpdate;
 import com.example.soo.exception.ParamException;
 import com.example.soo.exception.ResultException;
 import com.example.soo.exception.SooException;
@@ -17,6 +18,7 @@ import org.springframework.util.StringUtils;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @Author shenhaijin
@@ -44,12 +46,56 @@ public class SysMenuService implements ISysMenuService {
         if(!CollectionUtils.isEmpty(sysMenuList)){
             throw new ResultException("菜单名或菜单路径已存在！");
         }
-        SysMenu sysMenu = sysMenuBase.covert();
+        SysMenu sysMenu = sysMenuBase.convert();
         sysMenu.setCreateTime(new Date());
         sysMenu.setUpdateTime(sysMenu.getCreateTime());
         int number = sysMenuMapper.insert(sysMenu);
         if(number < 1){
             throw new ResultException("保存菜单失败！");
+        }
+        return true;
+    }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean updateMenu(SysMenuUpdate sysMenuUpdate) throws Exception {
+        if(ObjectUtils.isEmpty(sysMenuUpdate)){
+            throw new ParamException("菜单为空");
+        }
+        if(StringUtils.isEmpty(sysMenuUpdate.getMenuId())){
+            throw new ParamException("菜单id为空");
+        }
+        SysMenu sysMenu = sysMenuMapper.selectById(sysMenuUpdate.getMenuId());
+        if(ObjectUtils.isEmpty(sysMenu)){
+            throw new ResultException("菜单不存在");
+        }
+
+        QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<>();
+        queryWrapper.ne("id",sysMenuUpdate.getMenuId());
+        queryWrapper.and(new Consumer<QueryWrapper<SysMenu>>() {
+            @Override
+            public void accept(QueryWrapper<SysMenu> sysMenuQueryWrapper) {
+                sysMenuQueryWrapper.eq("menu_name",sysMenuUpdate.getMenuName());
+                sysMenuQueryWrapper.or();
+                sysMenuQueryWrapper.eq("menu_path",sysMenuUpdate.getMenuPath());
+            }
+        });
+        List<SysMenu> sysMenuList = sysMenuMapper.selectList(queryWrapper);
+        if(!CollectionUtils.isEmpty(sysMenuList)){
+            throw new ResultException("菜单名或路径已存在！");
+        }
+        if(!StringUtils.isEmpty(sysMenuUpdate.getMenuName())){
+            sysMenu.setMenuName(sysMenuUpdate.getMenuName());
+        }
+        if(!StringUtils.isEmpty(sysMenuUpdate.getMenuPath())){
+            sysMenu.setMenuPath(sysMenuUpdate.getMenuPath());
+        }
+        if(!StringUtils.isEmpty(sysMenuUpdate.getMenuType())){
+            sysMenu.setMenuType(sysMenuUpdate.getMenuType());
+        }
+        sysMenu.setUpdateTime(new Date());
+        int number = sysMenuMapper.updateById(sysMenu);
+        if(number < 1){
+            throw new ResultException("编辑菜单失败！");
         }
         return true;
     }

@@ -1,5 +1,6 @@
 package com.example.soo.bean.query;
 
+import com.example.common.convert.QueryConvert;
 import com.example.soo.bean.entity.SysMenu;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -11,7 +12,7 @@ import io.swagger.annotations.ApiModelProperty;
  * @Version 1.0
  **/
 @ApiModel
-public class SysMenuBase implements ConvertBase<SysMenu>{
+public class SysMenuBase implements QueryConvert<SysMenu> {
     @ApiModelProperty("菜单名称")
     protected String menuName;
     @ApiModelProperty("菜单路径")
@@ -44,7 +45,7 @@ public class SysMenuBase implements ConvertBase<SysMenu>{
     }
 
     @Override
-    public SysMenu covert() {
+    public SysMenu convert() {
         SysMenu sysMenu = new SysMenu();
         sysMenu.setMenuName(this.menuName);
         sysMenu.setMenuPath(this.menuPath);

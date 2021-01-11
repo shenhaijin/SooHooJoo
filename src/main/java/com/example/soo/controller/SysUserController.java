@@ -60,7 +60,7 @@ public class SysUserController {
         return ResultFactory.success(saveResult);
     }
 
-    @PostMapping(value = "update")
+    @PutMapping(value = "update")
     @ApiOperation(value = "编辑用户",notes = "编辑用户")
     @CtrlAop
     public Result<Boolean> save(SysUserUpdate sysUserUpdate) throws Exception{

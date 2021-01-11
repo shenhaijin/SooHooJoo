@@ -35,7 +35,7 @@ public class SysRoleController {
         boolean addResult = sysRoleService.addRole(sysRoleMenuBase);
         return ResultFactory.success(addResult);
     }
-    @PostMapping("update")
+    @PutMapping("update")
     @ApiOperation(value = "修改角色",notes = "修改系统菜单角色")
     @CtrlAop
     public Result<Boolean> updateRole(SysRoleMenuUpdate sysRoleMenuUpdate) throws Exception{

@@ -42,7 +42,7 @@ public class SysTaskController {
         SooPage<SysTaskConfig> sysTaskConfigSooPage = sysTaskService.findTaskPage(pageIndex,pageSize,taskName);
         return ResultFactory.success(sysTaskConfigSooPage);
     }
-    @PostMapping("update")
+    @PutMapping("update")
     @ApiOperation(value = "编辑任务",notes = "编辑定时任务")
     @CtrlAop
     public Result<Boolean> updateTask(TaskUpdate taskUpdate) throws Exception{

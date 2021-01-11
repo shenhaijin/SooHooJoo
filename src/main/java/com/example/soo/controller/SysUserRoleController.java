@@ -28,7 +28,7 @@ public class SysUserRoleController {
         boolean addResult = sysUserRoleService.addUserRole(userRoleUpdate);
         return ResultFactory.success(addResult);
     }
-    @PostMapping("update")
+    @PutMapping("update")
     @ApiOperation(value = "修改用户角色",notes = "修改用户角色信息")
     @CtrlAop
     public Result<Boolean> updateUserRole(UserRoleUpdate userRoleUpdate) throws Exception{
