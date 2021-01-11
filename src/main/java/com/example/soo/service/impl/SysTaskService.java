@@ -102,14 +102,7 @@ public class SysTaskService implements ISysTaskService {
         if(taskUpdate == null){
             throw new ParamException("参数为空");
         }
-        String taskId = taskUpdate.getTaskId();
-        if(StringUtils.isEmpty(taskId)){
-            throw new ParamException("taskId为空");
-        }
-        SysTaskConfig oldSysTaskConfig = sysTaskConfigMapper.selectById(taskId);
-        if(oldSysTaskConfig == null){
-            throw new ResultException("任务不存在");
-        }
+        SysTaskConfig oldSysTaskConfig = commonTaskJob(taskUpdate.getTaskId());
         SysTaskConfig curSysTaskConfig = new SysTaskConfig();
         BeanUtils.copyProperties(oldSysTaskConfig,curSysTaskConfig);
         if(!StringUtils.isEmpty(taskUpdate.getTaskName())){
@@ -154,14 +147,14 @@ public class SysTaskService implements ISysTaskService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean pauseTaskJob(String taskId) throws Exception{
-        if(StringUtils.isEmpty(taskId)){
-            throw new ParamException("taskId为空");
+        SysTaskConfig sysTaskConfig = commonTaskJob(taskId);
+        if(RunStatus.PAUSE.getCode().equals(sysTaskConfig.getTaskStatus())){
+            throw new ResultException("当前任务已暂停！");
         }
-        SysTaskConfig sysTaskConfig = sysTaskConfigMapper.selectById(taskId);
         sysTaskConfig.setUpdateTime(new Date());
         sysTaskConfig.setTaskStatus(RunStatus.PAUSE.getCode());
         int number = sysTaskConfigMapper.updateById(sysTaskConfig);
-        if (number > 1){
+        if (number < 1){
             throw new ResultException("暂停任务失败！");
         }
         jobManager.deleteJob(sysTaskConfig);
@@ -170,6 +163,21 @@ public class SysTaskService implements ISysTaskService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean runTaskJob(String taskId) throws Exception{
+        SysTaskConfig sysTaskConfig = commonTaskJob(taskId);
+        if(RunStatus.RUN.getCode().equals(sysTaskConfig.getTaskStatus())){
+            throw new ResultException("当前任务已运行！");
+        }
+        sysTaskConfig.setUpdateTime(new Date());
+        sysTaskConfig.setTaskStatus(RunStatus.RUN.getCode());
+        int number = sysTaskConfigMapper.updateById(sysTaskConfig);
+        if (number < 1){
+            throw new ResultException("启动任务失败！");
+        }
+        jobManager.addJob(sysTaskConfig);
+        return true;
+    }
+
+    private SysTaskConfig commonTaskJob(String taskId) throws Exception{
         if(StringUtils.isEmpty(taskId)){
             throw new ParamException("taskId为空");
         }
@@ -177,13 +185,6 @@ public class SysTaskService implements ISysTaskService {
         if(ObjectUtils.isEmpty(sysTaskConfig)){
             throw new ResultException("任务不存在！");
         }
-        sysTaskConfig.setUpdateTime(new Date());
-        sysTaskConfig.setTaskStatus(RunStatus.RUN.getCode());
-        int number = sysTaskConfigMapper.updateById(sysTaskConfig);
-        if (number > 1){
-            throw new ResultException("启动任务失败！");
-        }
-        jobManager.addJob(sysTaskConfig);
-        return true;
+        return sysTaskConfig;
     }
 }
