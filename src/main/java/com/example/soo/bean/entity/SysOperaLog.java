@@ -23,26 +23,32 @@ public class SysOperaLog {
     @TableField("operator")
     @ApiModelProperty("操作者")
     private String operator;
-
     @TableField("method_name")
     @ApiModelProperty("方法名")
     private String methodName;
-
     @TableField("class_name")
     @ApiModelProperty("类名")
     private String className;
-
     @TableField("visit_ip")
     @ApiModelProperty("访问者IP")
     private String visitIp;
-
     @TableField("operation_time")
     @ApiModelProperty("访问时间")
     private Date operationTime;
-
     @TableField("operat_status")
     @ApiModelProperty("操作状态")
     private String operatStatus;
+    @TableField("handler_time")
+    @ApiModelProperty("操作状态")
+    private Long handlerTime;
+
+    public Long getHandlerTime() {
+        return handlerTime;
+    }
+
+    public void setHandlerTime(Long handlerTime) {
+        this.handlerTime = handlerTime;
+    }
 
     public String getId() {
         return id;
@@ -110,6 +116,7 @@ public class SysOperaLog {
                 ", visitIp='" + visitIp + '\'' +
                 ", operationTime=" + operationTime +
                 ", operatStatus='" + operatStatus + '\'' +
+                ", handlerTime=" + handlerTime +
                 '}';
     }
 }

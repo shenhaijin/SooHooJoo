@@ -12,7 +12,6 @@ import com.example.soo.exception.AuthException;
 import com.example.soo.exception.SooException;
 import com.example.soo.service.ISysMenuService;
 import com.example.soo.service.ISysUserService;
-import com.example.soo.service.impl.SysMenuService;
 import com.example.soo.service.impl.SysOperaLogService;
 import com.example.soo.util.JWTUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -57,12 +56,13 @@ public class GloalAspect {
     @Around("pointCut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint) {
         SysOperaLog sysOperaLog = new SysOperaLog();
-        sysOperaLog.setOperationTime(new Date(System.currentTimeMillis()));
         sysOperaLog.setOperatStatus(OperatStatus.FAIL.getCode());
         Signature signature = proceedingJoinPoint.getSignature();
         Method method = ((MethodSignature) signature).getMethod();
         sysOperaLog.setMethodName(method.getName());
         sysOperaLog.setClassName(signature.getDeclaringType().getName());
+        long startTime = System.currentTimeMillis();
+        sysOperaLog.setOperationTime(new Date(startTime));
         Object responseObj = null;
         try {
             checkUserMenuAuth(sysOperaLog,method);
@@ -84,6 +84,8 @@ public class GloalAspect {
                     sysOperaLog.setOperatStatus(OperatStatus.SUCCESS.getCode());
                 }
             }
+            long endTime = System.currentTimeMillis();
+            sysOperaLog.setHandlerTime(endTime - startTime);
             writeSysOperaLog(sysOperaLog);
         }
         return responseObj;

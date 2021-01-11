@@ -64,7 +64,7 @@ public class SysTaskController {
         boolean result = sysTaskService.deleteTask(taskId);
         return ResultFactory.success(result);
     }
-    @PostMapping("pause")
+    @PutMapping("pause")
     @ApiOperation(value = "暂停任务",notes = "暂停定时任务")
     @ApiImplicitParam(name = "taskId",value = "任务Id",required = true)
     @CtrlAop
@@ -72,7 +72,7 @@ public class SysTaskController {
         boolean result = sysTaskService.pauseTaskJob(taskId);
         return ResultFactory.success(result);
     }
-    @PostMapping("run")
+    @PutMapping("run")
     @ApiOperation(value = "启动任务",notes = "启动定时任务")
     @ApiImplicitParam(name = "taskId",value = "任务Id",required = true)
     @CtrlAop

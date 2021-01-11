@@ -1,7 +1,11 @@
 package com.example.soo.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.common.page.SooPage;
 import com.example.soo.bean.entity.SysMenu;
+import com.example.soo.bean.query.QueryMenuPage;
 import com.example.soo.bean.query.SysMenuBase;
 import com.example.soo.bean.query.SysMenuUpdate;
 import com.example.soo.exception.ParamException;
@@ -9,6 +13,7 @@ import com.example.soo.exception.ResultException;
 import com.example.soo.exception.SooException;
 import com.example.soo.mapper.SysMenuMapper;
 import com.example.soo.service.ISysMenuService;
+import com.example.soo.util.ConvertUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -100,6 +105,16 @@ public class SysMenuService implements ISysMenuService {
         return true;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean deleteMenu(String menuId) throws Exception {
+        if(StringUtils.isEmpty(menuId)){
+            throw new ParamException("菜单Id");
+        }
+        sysMenuMapper.deleteById(menuId);
+        return true;
+    }
+
     @Override
     public List<SysMenu> findUserAllMenuList(String userId) throws SooException{
         if(StringUtils.isEmpty(userId)){
@@ -107,5 +122,20 @@ public class SysMenuService implements ISysMenuService {
         }
         List<SysMenu> sysMenuList = sysMenuMapper.finaSysUserMenuList(userId);
         return sysMenuList;
+    }
+
+    @Override
+    public SooPage<SysMenu> pageMenu(QueryMenuPage queryMenuPage) throws Exception {
+        QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<>();
+        if(!StringUtils.isEmpty(queryMenuPage.getCondition())){
+            queryWrapper.like("menu_name",queryMenuPage.getCondition());
+            queryWrapper.or();
+            queryWrapper.like("menu_path",queryMenuPage.getCondition());
+        }
+        queryWrapper.orderByDesc("update_time");
+        IPage<SysMenu> page = new Page<>(queryMenuPage.getPageIndex(),queryMenuPage.getPageSize());
+        page = sysMenuMapper.selectPage(page,queryWrapper);
+        SooPage<SysMenu> sysMenuSooPage = ConvertUtil.mybatisConvertPage(page);
+        return sysMenuSooPage;
     }
 }

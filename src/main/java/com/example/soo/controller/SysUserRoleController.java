@@ -5,6 +5,7 @@ import com.example.common.response.ResultFactory;
 import com.example.soo.aop.CtrlAop;
 import com.example.soo.bean.query.UserRoleUpdate;
 import com.example.soo.service.ISysUserRoleService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
  **/
 @RestController
 @RequestMapping("user/role")
+@Api(tags = "用户角色管理")
 public class SysUserRoleController {
     @Autowired
     ISysUserRoleService sysUserRoleService;
