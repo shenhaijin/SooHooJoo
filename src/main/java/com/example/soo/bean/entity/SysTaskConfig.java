@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
@@ -18,7 +19,7 @@ import java.util.Objects;
  **/
 @TableName("sys_task_config")
 @ApiModel("定时任务对象")
-public class SysTaskConfig {
+public class SysTaskConfig implements Serializable {
     @TableId(type = IdType.UUID)
     private String id;
     @TableField("task_name")

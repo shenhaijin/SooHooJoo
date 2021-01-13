@@ -14,6 +14,7 @@ import com.example.soo.exception.SooException;
 import com.example.soo.mapper.SysMenuMapper;
 import com.example.soo.service.ISysMenuService;
 import com.example.soo.util.ConvertUtil;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -116,6 +117,7 @@ public class SysMenuService implements ISysMenuService {
     }
 
     @Override
+    @Cacheable(key = "#userId",unless = "#result == null",cacheNames = "textRedis")
     public List<SysMenu> findUserAllMenuList(String userId) throws SooException{
         if(StringUtils.isEmpty(userId)){
             throw new ParamException("用户Id不存在");

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Date;
  **/
 @TableName("sys_role")
 @ApiModel("角色对象")
-public class SysRole {
+public class SysRole implements Serializable {
     @TableId(type = IdType.UUID)
     @ApiModelProperty("主键Id")
     private String id;

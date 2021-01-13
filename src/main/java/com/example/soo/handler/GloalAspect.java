@@ -23,6 +23,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -32,6 +33,9 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.Date;
 import java.util.List;
+
+import static com.example.common.constant.Constant.ACCESS_TOKEN_KEY;
+import static com.example.common.constant.Constant.SUPER_ADMIN_FLAG;
 
 /**
  * @Author shenhaijin
@@ -43,8 +47,6 @@ import java.util.List;
 @Component
 public class GloalAspect {
     private static final String SYS_OPERA_PATH = "/sys/log/page";       //  日志列表接口
-    private static final String SUPER_ADMIN_FLAG = "1";                 //  超级管理员标识
-    private static final String ACCESS_TOKEN = "token";
     @Autowired
     ISysUserService sysUserService;
     @Autowired
@@ -98,23 +100,20 @@ public class GloalAspect {
             if(isNeedCheckAuth){
                 ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
                 HttpServletRequest httpServletRequest = servletRequestAttributes.getRequest();
-                String authToken = httpServletRequest.getHeader(ACCESS_TOKEN);
+                String authToken = httpServletRequest.getHeader(ACCESS_TOKEN_KEY);
                 if(StringUtils.isEmpty(authToken)){
                     throw new AuthException("token为空");
                 }
-                String userName = JWTUtil.decodeToken(authToken);
-                SysUser condition = new SysUser();
-                condition.setUserName(userName);
-                List<SysUser> userList = sysUserService.findUserByCondition(condition);
-                if(CollectionUtils.isEmpty(userList)){
+                JWTUtil.verifyToken(authToken);
+                SysUser sysUser = sysUserService.sel(JWTUtil.getUserId(authToken));
+                if(ObjectUtils.isEmpty(sysUser)){
                     throw new AuthException("token无效");
                 }
-                sysOperaLog.setOperator(userName);
-                String superAdmin = userList.get(0).getSuperAdmin();
+                sysOperaLog.setOperator(sysUser.getUserName());
+                String superAdmin = sysUser.getSuperAdmin();
                 //非超级管理员需要权限
                 if(!SUPER_ADMIN_FLAG.equalsIgnoreCase(superAdmin)){
-                    String userId = userList.get(0).getId();
-                    List<SysMenu> sysMenuList = sysMenuService.findUserAllMenuList(userId);
+                    List<SysMenu> sysMenuList = sysMenuService.findUserAllMenuList(sysUser.getId());
                     if(CollectionUtils.isEmpty(sysMenuList)){
                         throw new AuthException("用户无任何权限！");
                     }
@@ -129,7 +128,7 @@ public class GloalAspect {
                         }
                     }
                     if(!validateResult){
-                        throw new AuthException("用户【"+userName+"】 无该接口 >>> " + reqPath + " <<<权限");
+                        throw new AuthException("用户【"+sysUser.getUserName()+"】 无该接口 >>> " + reqPath + " <<<权限");
                     }
                 }
             }

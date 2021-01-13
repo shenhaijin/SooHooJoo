@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Date;
  **/
 @TableName("sys_opera_log")
 @ApiModel("系统操作日志对象")
-public class SysOperaLog {
+public class SysOperaLog implements Serializable {
     @TableId(type = IdType.UUID)
     private String id;
     @TableField("operator")
@@ -39,7 +40,7 @@ public class SysOperaLog {
     @ApiModelProperty("操作状态")
     private String operatStatus;
     @TableField("handler_time")
-    @ApiModelProperty("操作状态")
+    @ApiModelProperty("响应时间")
     private Long handlerTime;
 
     public Long getHandlerTime() {

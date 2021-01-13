@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Date;
  * @Version 1.0
  **/
 @TableName("sys_menu")
-public class SysMenu {
+public class SysMenu implements Serializable {
     @TableId(type = IdType.UUID)
     private String id;
     @TableField("menu_name")

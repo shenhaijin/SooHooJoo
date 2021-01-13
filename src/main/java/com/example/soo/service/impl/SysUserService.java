@@ -16,6 +16,7 @@ import com.example.soo.mapper.SysUserMapper;
 import com.example.soo.mapper.SysUserRoleMapper;
 import com.example.soo.service.ISysUserService;
 import com.example.soo.util.ConvertUtil;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -58,6 +59,7 @@ public class SysUserService implements ISysUserService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
+    @CacheEvict(key = "#userId",cacheNames = "textRedis")
     public boolean deleteUser(String userId) throws Exception{
         if(!StringUtils.isEmpty(userId)){
             sysUserMapper.deleteById(userId);
@@ -150,26 +152,5 @@ public class SysUserService implements ISysUserService {
         userPage = sysUserMapper.selectPage(userPage,wrapper);
         SooPage<SysUser> sooPage = ConvertUtil.mybatisConvertPage(userPage);
         return sooPage;
-    }
-    @Override
-    public List<SysUser> findUserByCondition(SysUser user) throws SooException{
-        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-        if(user != null){
-            if(!StringUtils.isEmpty(user.getId())){
-                queryWrapper.eq("id",user.getId());
-            }
-            if(!StringUtils.isEmpty(user.getUserName())){
-                queryWrapper.eq("user_name",user.getUserName());
-            }
-            if(!StringUtils.isEmpty(user.getRealName())){
-                queryWrapper.eq("real_name",user.getRealName());
-            }
-            if(!StringUtils.isEmpty(user.getPassWord())){
-                queryWrapper.eq("pass_word",user.getPassWord());
-            }
-        }
-        queryWrapper.orderByDesc("update_time");
-        List<SysUser> userList = sysUserMapper.selectList(queryWrapper);
-        return userList;
     }
 }

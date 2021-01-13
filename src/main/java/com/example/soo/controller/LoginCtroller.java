@@ -46,7 +46,7 @@ public class LoginCtroller {
         if(ObjectUtils.isEmpty(user)){
             throw new ParamException("用户或密码错误!");
         }
-        String token = JWTUtil.createJWT(userName,passWord);
+        String token = JWTUtil.createJWT(user.getId(),user.getUserName());
         return ResultFactory.success(token);
     }
 

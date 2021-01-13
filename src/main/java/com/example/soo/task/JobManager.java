@@ -29,20 +29,22 @@ public class JobManager {
         if(!CollectionUtils.isEmpty(sysTaskConfigList)){
             sysTaskConfigList.stream().forEach(sysTaskConfig -> {
                 try {
-                    addJob(sysTaskConfig);
+                    if(RunStatus.RUN.getCode().equals(sysTaskConfig.getTaskStatus())){
+                        addJob(sysTaskConfig);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
-            sysTaskConfigList.stream().forEach(sysTaskConfig -> {
-                try{
-                    if(RunStatus.PAUSE.getCode().equals(sysTaskConfig.getTaskStatus())){
-                        pauseJob(sysTaskConfig);
-                    }
-                }catch (Exception ex){
-                    ex.printStackTrace();
-                }
-            });
+//            sysTaskConfigList.stream().forEach(sysTaskConfig -> {
+//                try{
+//                    if(RunStatus.PAUSE.getCode().equals(sysTaskConfig.getTaskStatus())){
+//                        pauseJob(sysTaskConfig);
+//                    }
+//                }catch (Exception ex){
+//                    ex.printStackTrace();
+//                }
+//            });
         }
     }
     public boolean addJob(SysTaskConfig sysTaskConfig) throws Exception{
@@ -60,26 +62,26 @@ public class JobManager {
         logger.info(" jobManager[addJob] >>>  end");
         return true;
     }
-    public boolean pauseJob(SysTaskConfig sysTaskConfig) throws Exception{
-        logger.info(" jobManager[pauseJob] >>>  sysTaskConfig " + sysTaskConfig);
-        if(!ObjectUtils.isEmpty(sysTaskConfig)){
-            JobKey jobKey = JobKey.jobKey(sysTaskConfig.getTaskName(),sysTaskConfig.getTaskGroup());
-            Scheduler scheduler = schedulerFactory.getScheduler();
-            scheduler.pauseJob(jobKey);
-        }
-        logger.info(" jobManager[pauseJob] >>>  end");
-        return true;
-    }
-    public boolean resumeJob(SysTaskConfig sysTaskConfig) throws Exception{
-        logger.info(" jobManager[resumeJob] >>>  sysTaskConfig " + sysTaskConfig);
-        if(!ObjectUtils.isEmpty(sysTaskConfig)){
-            JobKey jobKey = JobKey.jobKey(sysTaskConfig.getTaskName(),sysTaskConfig.getTaskGroup());
-            Scheduler scheduler = schedulerFactory.getScheduler();
-            scheduler.resumeJob(jobKey);
-        }
-        logger.info(" jobManager[resumeJob] >>>  end");
-        return true;
-    }
+//    public boolean pauseJob(SysTaskConfig sysTaskConfig) throws Exception{
+//        logger.info(" jobManager[pauseJob] >>>  sysTaskConfig " + sysTaskConfig);
+//        if(!ObjectUtils.isEmpty(sysTaskConfig)){
+//            JobKey jobKey = JobKey.jobKey(sysTaskConfig.getTaskName(),sysTaskConfig.getTaskGroup());
+//            Scheduler scheduler = schedulerFactory.getScheduler();
+//            scheduler.pauseJob(jobKey);
+//        }
+//        logger.info(" jobManager[pauseJob] >>>  end");
+//        return true;
+//    }
+//    public boolean resumeJob(SysTaskConfig sysTaskConfig) throws Exception{
+//        logger.info(" jobManager[resumeJob] >>>  sysTaskConfig " + sysTaskConfig);
+//        if(!ObjectUtils.isEmpty(sysTaskConfig)){
+//            JobKey jobKey = JobKey.jobKey(sysTaskConfig.getTaskName(),sysTaskConfig.getTaskGroup());
+//            Scheduler scheduler = schedulerFactory.getScheduler();
+//            scheduler.resumeJob(jobKey);
+//        }
+//        logger.info(" jobManager[resumeJob] >>>  end");
+//        return true;
+//    }
     public boolean deleteJob(SysTaskConfig sysTaskConfig) throws Exception{
         logger.info(" jobManager[deleteJob] >>>  sysTaskConfig " + sysTaskConfig);
         if(!ObjectUtils.isEmpty(sysTaskConfig)){

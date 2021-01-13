@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import java.io.Serializable;
+
 /**
  * @Author shenhaijin
  * @Date 2021/1/5 15:10
@@ -12,7 +14,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
  * @Version 1.0
  **/
 @TableName("sys_role_menu")
-public class SysRoleMenu {
+public class SysRoleMenu implements Serializable {
     @TableId(type = IdType.UUID)
     private String id;
     @TableField("role_id")

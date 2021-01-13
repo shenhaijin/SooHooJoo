@@ -21,5 +21,4 @@ public interface ISysUserService {
     boolean saveUser(SysUserBase sysUserBase) throws Exception;
     Boolean updateUser(SysUserUpdate sysUserUpdate) throws Exception;
     SooPage<SysUser> pageUser(Long pageIndex, Long pageSize, String userName) throws Exception;
-    List<SysUser> findUserByCondition(SysUser user) throws Exception;
 }
