@@ -1,8 +1,8 @@
 package com.example.soo.controller;
 
-import com.example.common.page.SooPage;
 import com.example.common.response.Result;
 import com.example.common.response.ResultFactory;
+import com.example.common.page.PageHelper;
 import com.example.soo.aop.CtrlAop;
 import com.example.soo.bean.entity.SysUser;
 import com.example.soo.bean.query.SysUserBase;
@@ -75,10 +75,10 @@ public class SysUserController {
             @ApiImplicitParam(name = "userName",value = "用户名",required = false)
     })
     @CtrlAop
-    public Result<SooPage<SysUser>> pageUser(@RequestParam(defaultValue = "1",required = false)Long pageIndex,
+    public Result<PageHelper<SysUser>> pageUser(@RequestParam(defaultValue = "1",required = false)Long pageIndex,
                                           @RequestParam(defaultValue = "5",required = false)Long pageSize,
                                           @RequestParam(required = false) String userName) throws Exception{
-        SooPage<SysUser> userPage = sysUserService.pageUser(pageIndex,pageSize,userName);
+        PageHelper<SysUser> userPage = sysUserService.pageUser(pageIndex,pageSize,userName);
         return ResultFactory.success(userPage);
     }
 }

@@ -1,8 +1,8 @@
 package com.example.soo.controller;
 
-import com.example.common.page.SooPage;
 import com.example.common.response.Result;
 import com.example.common.response.ResultFactory;
+import com.example.common.page.PageHelper;
 import com.example.soo.aop.CtrlAop;
 import com.example.soo.bean.entity.SysRole;
 import com.example.soo.bean.query.QueryRolePage;
@@ -45,8 +45,8 @@ public class SysRoleController {
     @GetMapping("page")
     @ApiOperation(value = "分页列表",notes = "菜单角色分页列表查询")
     @CtrlAop
-    public Result<SooPage<SysRole>> pageRole(QueryRolePage queryRolePage) throws Exception{
-        SooPage<SysRole> sysRoleSooPage = sysRoleService.pageRole(queryRolePage);
+    public Result<PageHelper<SysRole>> pageRole(QueryRolePage queryRolePage) throws Exception{
+        PageHelper<SysRole> sysRoleSooPage = sysRoleService.pageRole(queryRolePage);
         return ResultFactory.success(sysRoleSooPage);
     }
     @DeleteMapping("delete")

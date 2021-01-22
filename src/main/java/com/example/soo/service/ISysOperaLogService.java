@@ -1,6 +1,6 @@
 package com.example.soo.service;
 
-import com.example.common.page.SooPage;
+import com.example.common.page.PageHelper;
 import com.example.soo.bean.entity.SysOperaLog;
 
 import java.util.Date;
@@ -14,5 +14,5 @@ import java.util.Date;
 public interface ISysOperaLogService {
     int deleteSysOperaLog(Date beforeTime) throws Exception;
     boolean saveSysOperaLog(SysOperaLog sysOperaLog) throws Exception;
-    SooPage<SysOperaLog> pageSysOperaLog(Long pageIndex, Long pageSize, String userName) throws Exception;
+    PageHelper<SysOperaLog> pageSysOperaLog(Long pageIndex, Long pageSize, String userName) throws Exception;
 }

@@ -1,6 +1,6 @@
 package com.example.soo.service;
 
-import com.example.common.page.SooPage;
+import com.example.common.page.PageHelper;
 import com.example.soo.bean.entity.SysMenu;
 import com.example.soo.bean.query.QueryMenuPage;
 import com.example.soo.bean.query.SysMenuBase;
@@ -19,5 +19,5 @@ public interface ISysMenuService {
     boolean updateMenu(SysMenuUpdate sysMenuUpdate) throws Exception;
     boolean deleteMenu(String menuId) throws Exception;
     List<SysMenu> findUserAllMenuList(String userId) throws Exception;
-    SooPage<SysMenu> pageMenu(QueryMenuPage queryMenuPage) throws Exception;
+    PageHelper<SysMenu> pageMenu(QueryMenuPage queryMenuPage) throws Exception;
 }

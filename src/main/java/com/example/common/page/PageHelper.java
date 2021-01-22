@@ -1,6 +1,5 @@
 package com.example.common.page;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
@@ -8,12 +7,11 @@ import java.util.Objects;
 
 /**
  * @Author shenhaijin
- * @Date 2020/12/31 14:00
- * @Description 分页对象
+ * @Date 2021/1/22 9:05
+ * @Description TODO
  * @Version 1.0
  **/
-@ApiModel
-public class SooPage<T> {
+public class PageHelper<T> {
     @ApiModelProperty("当前页")
     private Long pageIndex;
     @ApiModelProperty("每页大小")
@@ -69,12 +67,12 @@ public class SooPage<T> {
     public boolean equals(Object o) {
         if (this == o) {return true;}
         if (o == null || getClass() != o.getClass()) {return false;}
-        SooPage<?> sooPage = (SooPage<?>) o;
-        return Objects.equals(pageIndex, sooPage.pageIndex) &&
-                Objects.equals(pageSize, sooPage.pageSize) &&
-                Objects.equals(pageNo, sooPage.pageNo) &&
-                Objects.equals(totalSize, sooPage.totalSize) &&
-                Objects.equals(recordList, sooPage.recordList);
+        PageHelper<?> pageHelper = (PageHelper<?>) o;
+        return Objects.equals(pageIndex, pageHelper.pageIndex) &&
+                Objects.equals(pageSize, pageHelper.pageSize) &&
+                Objects.equals(pageNo, pageHelper.pageNo) &&
+                Objects.equals(totalSize, pageHelper.totalSize) &&
+                Objects.equals(recordList, pageHelper.recordList);
     }
 
     @Override

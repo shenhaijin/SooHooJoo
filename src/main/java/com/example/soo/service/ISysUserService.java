@@ -1,6 +1,6 @@
 package com.example.soo.service;
 
-import com.example.common.page.SooPage;
+import com.example.common.page.PageHelper;
 import com.example.soo.bean.entity.SysUser;
 import com.example.soo.bean.query.SysUserBase;
 import com.example.soo.bean.query.SysUserUpdate;
@@ -20,5 +20,5 @@ public interface ISysUserService {
     List<SysUser> getListUser() throws Exception;
     boolean saveUser(SysUserBase sysUserBase) throws Exception;
     Boolean updateUser(SysUserUpdate sysUserUpdate) throws Exception;
-    SooPage<SysUser> pageUser(Long pageIndex, Long pageSize, String userName) throws Exception;
+    PageHelper<SysUser> pageUser(Long pageIndex, Long pageSize, String userName) throws Exception;
 }

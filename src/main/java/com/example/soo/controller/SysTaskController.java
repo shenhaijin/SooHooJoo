@@ -1,8 +1,8 @@
 package com.example.soo.controller;
 
-import com.example.common.page.SooPage;
 import com.example.common.response.Result;
 import com.example.common.response.ResultFactory;
+import com.example.common.page.PageHelper;
 import com.example.soo.aop.CtrlAop;
 import com.example.soo.bean.entity.SysTaskConfig;
 import com.example.soo.bean.query.TaskBase;
@@ -35,11 +35,11 @@ public class SysTaskController {
             @ApiImplicitParam(name = "taskName",value = "任务名称",required = false)
     })
     @CtrlAop
-    public Result<SooPage<SysTaskConfig>> page(
+    public Result<PageHelper<SysTaskConfig>> page(
             @RequestParam(defaultValue = "1",required = false)Long pageIndex,
             @RequestParam(defaultValue = "5",required = false)Long pageSize,
             @RequestParam(required = false) String taskName) throws Exception{
-        SooPage<SysTaskConfig> sysTaskConfigSooPage = sysTaskService.findTaskPage(pageIndex,pageSize,taskName);
+        PageHelper<SysTaskConfig> sysTaskConfigSooPage = sysTaskService.findTaskPage(pageIndex,pageSize,taskName);
         return ResultFactory.success(sysTaskConfigSooPage);
     }
     @PutMapping("update")

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.common.page.SooPage;
+import com.example.common.page.PageHelper;
 import com.example.soo.bean.entity.SysRole;
 import com.example.soo.bean.entity.SysRoleMenu;
 import com.example.soo.bean.query.QueryRolePage;
@@ -96,7 +96,7 @@ public class SysRoleService extends ServiceImpl<SysRoleMenuMapper,SysRoleMenu> i
     }
 
     @Override
-    public SooPage<SysRole> pageRole(QueryRolePage queryRolePage) throws Exception {
+    public PageHelper<SysRole> pageRole(QueryRolePage queryRolePage) throws Exception {
         QueryWrapper<SysRole> wrapper = new QueryWrapper<>();
         if(!StringUtils.isEmpty(queryRolePage.getRoleName())){
             wrapper.like("role_name",queryRolePage.getRoleName());
@@ -104,7 +104,7 @@ public class SysRoleService extends ServiceImpl<SysRoleMenuMapper,SysRoleMenu> i
         wrapper.orderByDesc("update_time");
         IPage<SysRole> sysRoleIPage = new Page(queryRolePage.getPageIndex(),queryRolePage.getPageSize());
         sysRoleIPage = sysRoleMapper.selectPage(sysRoleIPage,wrapper);
-        SooPage<SysRole> sooPage = ConvertUtil.mybatisConvertPage(sysRoleIPage);
+        PageHelper<SysRole> sooPage = ConvertUtil.mybatisPageConvertPageHelper(sysRoleIPage);
         return sooPage;
     }
     @Transactional(rollbackFor = Exception.class)

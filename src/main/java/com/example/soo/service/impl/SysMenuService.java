@@ -3,7 +3,7 @@ package com.example.soo.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.common.page.SooPage;
+import com.example.common.page.PageHelper;
 import com.example.soo.bean.entity.SysMenu;
 import com.example.soo.bean.query.QueryMenuPage;
 import com.example.soo.bean.query.SysMenuBase;
@@ -127,7 +127,7 @@ public class SysMenuService implements ISysMenuService {
     }
 
     @Override
-    public SooPage<SysMenu> pageMenu(QueryMenuPage queryMenuPage) throws Exception {
+    public PageHelper<SysMenu> pageMenu(QueryMenuPage queryMenuPage) throws Exception {
         QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<>();
         if(!StringUtils.isEmpty(queryMenuPage.getCondition())){
             queryWrapper.like("menu_name",queryMenuPage.getCondition());
@@ -137,7 +137,7 @@ public class SysMenuService implements ISysMenuService {
         queryWrapper.orderByDesc("update_time");
         IPage<SysMenu> page = new Page<>(queryMenuPage.getPageIndex(),queryMenuPage.getPageSize());
         page = sysMenuMapper.selectPage(page,queryWrapper);
-        SooPage<SysMenu> sysMenuSooPage = ConvertUtil.mybatisConvertPage(page);
+        PageHelper<SysMenu> sysMenuSooPage = ConvertUtil.mybatisPageConvertPageHelper(page);
         return sysMenuSooPage;
     }
 }

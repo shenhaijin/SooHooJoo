@@ -1,8 +1,8 @@
 package com.example.soo.controller;
 
-import com.example.common.page.SooPage;
 import com.example.common.response.Result;
 import com.example.common.response.ResultFactory;
+import com.example.common.page.PageHelper;
 import com.example.soo.aop.CtrlAop;
 import com.example.soo.bean.entity.SysMenu;
 import com.example.soo.bean.query.QueryMenuPage;
@@ -54,8 +54,8 @@ public class SysMenuController {
     @GetMapping("page")
     @ApiOperation(value = "菜单列表",notes = "菜单分页列表")
     @CtrlAop
-    public Result<SooPage<SysMenu>> pageMenu(QueryMenuPage queryMenuPage) throws Exception{
-        SooPage<SysMenu> sysMenuSooPage = sysMenuService.pageMenu(queryMenuPage);
+    public Result<PageHelper<SysMenu>> pageMenu(QueryMenuPage queryMenuPage) throws Exception{
+        PageHelper<SysMenu> sysMenuSooPage = sysMenuService.pageMenu(queryMenuPage);
         return ResultFactory.success(sysMenuSooPage);
     }
 }

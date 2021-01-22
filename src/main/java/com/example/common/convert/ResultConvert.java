@@ -1,7 +1,5 @@
 package com.example.common.convert;
 
-import com.example.common.page.SooPage;
-
 import java.util.List;
 
 /**
@@ -13,5 +11,5 @@ import java.util.List;
 public interface ResultConvert<S,T> {
     <T> T convert(S source);
     List<T> convert(List<S> sourceList);
-    SooPage<T> convert(SooPage<S> sourcePage);
+//    SooPage<T> convert(SooPage<S> sourcePage);
 }

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.common.page.SooPage;
+import com.example.common.page.PageHelper;
 import com.example.soo.bean.entity.SysOperaLog;
 import com.example.soo.exception.ResultException;
 import com.example.soo.mapper.SysOperaLogMapper;
@@ -46,7 +46,7 @@ public class SysOperaLogService implements ISysOperaLogService {
         return true;
     }
     @Override
-    public SooPage<SysOperaLog> pageSysOperaLog(Long pageIndex, Long pageSize, String userName) throws Exception{
+    public PageHelper<SysOperaLog> pageSysOperaLog(Long pageIndex, Long pageSize, String userName) throws Exception{
         QueryWrapper<SysOperaLog> wrapper = new QueryWrapper<>();
         if(!StringUtils.isEmpty(userName)){
             wrapper.like("operator",userName);
@@ -54,7 +54,7 @@ public class SysOperaLogService implements ISysOperaLogService {
         wrapper.orderByDesc("operation_time");
         IPage<SysOperaLog> sysOperaLogIPage = new Page(pageIndex,pageSize);
         sysOperaLogIPage = sysOperaLogMapper.selectPage(sysOperaLogIPage,wrapper);
-        SooPage<SysOperaLog> sooPage = ConvertUtil.mybatisConvertPage(sysOperaLogIPage);
+        PageHelper<SysOperaLog> sooPage = ConvertUtil.mybatisPageConvertPageHelper(sysOperaLogIPage);
         return sooPage;
     }
 

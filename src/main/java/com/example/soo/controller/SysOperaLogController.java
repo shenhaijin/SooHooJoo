@@ -1,8 +1,8 @@
 package com.example.soo.controller;
 
-import com.example.common.page.SooPage;
 import com.example.common.response.Result;
 import com.example.common.response.ResultFactory;
+import com.example.common.page.PageHelper;
 import com.example.soo.aop.CtrlAop;
 import com.example.soo.bean.entity.SysOperaLog;
 import com.example.soo.service.ISysOperaLogService;
@@ -36,11 +36,11 @@ public class SysOperaLogController {
             @ApiImplicitParam(name = "userName",value = "用户名",required = false)
     })
     @CtrlAop
-    Result<SooPage<SysOperaLog>> pageSysOperaLog(
+    Result<PageHelper<SysOperaLog>> pageSysOperaLog(
             @RequestParam(defaultValue = "1",required = false)Long pageIndex,
             @RequestParam(defaultValue = "5",required = false)Long pageSize,
             @RequestParam(required = false) String userName) throws Exception{
-        SooPage<SysOperaLog> sysOperaLogPage = sysOperaLogService.pageSysOperaLog(pageIndex,pageSize,userName);
+        PageHelper<SysOperaLog> sysOperaLogPage = sysOperaLogService.pageSysOperaLog(pageIndex,pageSize,userName);
         return ResultFactory.success(sysOperaLogPage);
     }
 }

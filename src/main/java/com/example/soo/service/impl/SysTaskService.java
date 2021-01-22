@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.common.constant.RunStatus;
-import com.example.common.page.SooPage;
+import com.example.common.page.PageHelper;
 import com.example.soo.bean.entity.SysTaskConfig;
 import com.example.soo.bean.query.TaskBase;
 import com.example.soo.bean.query.TaskUpdate;
@@ -132,7 +132,7 @@ public class SysTaskService implements ISysTaskService {
         return true;
     }
     @Override
-    public SooPage<SysTaskConfig> findTaskPage(Long pageIndex, Long pageSize,String taskName) throws Exception{
+    public PageHelper<SysTaskConfig> findTaskPage(Long pageIndex, Long pageSize, String taskName) throws Exception{
         QueryWrapper<SysTaskConfig> wrapper = new QueryWrapper<>();
         if(!StringUtils.isEmpty(taskName)){
             wrapper.like("task_name",taskName);
@@ -140,7 +140,7 @@ public class SysTaskService implements ISysTaskService {
         wrapper.orderByDesc("create_time");
         IPage<SysTaskConfig> sysTaskPage = new Page(pageIndex,pageSize);
         sysTaskPage = sysTaskConfigMapper.selectPage(sysTaskPage,wrapper);
-        SooPage<SysTaskConfig> sooPage = ConvertUtil.mybatisConvertPage(sysTaskPage);
+        PageHelper<SysTaskConfig> sooPage = ConvertUtil.mybatisPageConvertPageHelper(sysTaskPage);
         return sooPage;
     }
 

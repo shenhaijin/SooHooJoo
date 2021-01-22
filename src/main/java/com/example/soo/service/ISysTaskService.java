@@ -1,6 +1,6 @@
 package com.example.soo.service;
 
-import com.example.common.page.SooPage;
+import com.example.common.page.PageHelper;
 import com.example.soo.bean.entity.SysTaskConfig;
 import com.example.soo.bean.query.TaskBase;
 import com.example.soo.bean.query.TaskUpdate;
@@ -18,7 +18,7 @@ public interface ISysTaskService {
     boolean deleteTask(String taskId) throws Exception;
     boolean saveTask(TaskBase taskBase) throws Exception;
     boolean updateTask(TaskUpdate taskUpdate) throws Exception;
-    SooPage<SysTaskConfig> findTaskPage(Long pageIndex, Long pageSize, String taskName) throws Exception;
+    PageHelper<SysTaskConfig> findTaskPage(Long pageIndex, Long pageSize, String taskName) throws Exception;
     boolean pauseTaskJob(String taskId) throws Exception;
     boolean runTaskJob(String taskId) throws Exception;
 }

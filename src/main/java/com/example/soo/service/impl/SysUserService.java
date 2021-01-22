@@ -4,14 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.common.page.SooPage;
+import com.example.common.page.PageHelper;
 import com.example.soo.bean.entity.SysUser;
 import com.example.soo.bean.entity.SysUserRole;
 import com.example.soo.bean.query.SysUserBase;
 import com.example.soo.bean.query.SysUserUpdate;
 import com.example.soo.exception.ParamException;
 import com.example.soo.exception.ResultException;
-import com.example.soo.exception.SooException;
 import com.example.soo.mapper.SysUserMapper;
 import com.example.soo.mapper.SysUserRoleMapper;
 import com.example.soo.service.ISysUserService;
@@ -142,7 +141,7 @@ public class SysUserService implements ISysUserService {
     }
 
     @Override
-    public SooPage<SysUser> pageUser(Long pageIndex, Long pageSize,String userName) throws Exception{
+    public PageHelper<SysUser> pageUser(Long pageIndex, Long pageSize, String userName) throws Exception{
         QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
         if(!StringUtils.isEmpty(userName)){
             wrapper.like("user_name",userName);
@@ -150,7 +149,7 @@ public class SysUserService implements ISysUserService {
         wrapper.orderByDesc("update_time");
         IPage<SysUser> userPage = new Page(pageIndex,pageSize);
         userPage = sysUserMapper.selectPage(userPage,wrapper);
-        SooPage<SysUser> sooPage = ConvertUtil.mybatisConvertPage(userPage);
+        PageHelper<SysUser> sooPage = ConvertUtil.mybatisPageConvertPageHelper(userPage);
         return sooPage;
     }
 }
