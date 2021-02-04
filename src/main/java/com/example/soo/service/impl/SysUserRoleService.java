@@ -1,5 +1,6 @@
 package com.example.soo.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.soo.bean.entity.SysUser;
@@ -42,9 +43,9 @@ public class SysUserRoleService extends ServiceImpl<SysUserRoleMapper, SysUserRo
     @Override
     public boolean updateUserRole(UserRoleUpdate userRoleUpdate) throws Exception {
         validateUserRole(userRoleUpdate);
-        UpdateWrapper<SysUserRole> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("user_id",userRoleUpdate.getUserId());
-        this.remove(updateWrapper);
+        LambdaUpdateWrapper<SysUserRole> lambdaUpdateWrapper = new UpdateWrapper<SysUserRole>().lambda();
+        lambdaUpdateWrapper.eq(SysUserRole::getUserId,userRoleUpdate.getUserId());
+        this.remove(lambdaUpdateWrapper);
         saveCommon(userRoleUpdate.getRoleIdList(),userRoleUpdate.getUserId());
         return true;
     }

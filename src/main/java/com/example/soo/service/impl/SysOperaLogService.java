@@ -1,6 +1,8 @@
 package com.example.soo.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -32,9 +34,9 @@ public class SysOperaLogService implements ISysOperaLogService {
         if(beforeTime == null){
             beforeTime = new Date(System.currentTimeMillis() - CLEAR_SYSOPERALOG_TIME);
         }
-        UpdateWrapper<SysOperaLog> updateWrapper = new UpdateWrapper<SysOperaLog>();
-        updateWrapper.le("operation_time",beforeTime);
-        int number = sysOperaLogMapper.delete(updateWrapper);
+        LambdaUpdateWrapper<SysOperaLog> logLambdaUpdateWrapper = new UpdateWrapper<SysOperaLog>().lambda();
+        logLambdaUpdateWrapper.le(SysOperaLog::getCreateTime,beforeTime);
+        int number = sysOperaLogMapper.delete(logLambdaUpdateWrapper);
         return number;
     }
     @Override
@@ -47,13 +49,13 @@ public class SysOperaLogService implements ISysOperaLogService {
     }
     @Override
     public PageHelper<SysOperaLog> pageSysOperaLog(Long pageIndex, Long pageSize, String userName) throws Exception{
-        QueryWrapper<SysOperaLog> wrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<SysOperaLog> lambdaQueryWrapper = new QueryWrapper<SysOperaLog>().lambda();
         if(!StringUtils.isEmpty(userName)){
-            wrapper.like("operator",userName);
+            lambdaQueryWrapper.like(SysOperaLog::getOperator,userName);
         }
-        wrapper.orderByDesc("operation_time");
+        lambdaQueryWrapper.orderByDesc(SysOperaLog::getCreateTime);
         IPage<SysOperaLog> sysOperaLogIPage = new Page(pageIndex,pageSize);
-        sysOperaLogIPage = sysOperaLogMapper.selectPage(sysOperaLogIPage,wrapper);
+        sysOperaLogIPage = sysOperaLogMapper.selectPage(sysOperaLogIPage,lambdaQueryWrapper);
         PageHelper<SysOperaLog> sooPage = ConvertUtil.mybatisPageConvertPageHelper(sysOperaLogIPage);
         return sooPage;
     }

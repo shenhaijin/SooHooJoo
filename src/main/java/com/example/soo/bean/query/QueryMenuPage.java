@@ -14,6 +14,16 @@ import io.swagger.annotations.ApiModelProperty;
 public class QueryMenuPage extends PageQueryBase {
     @ApiModelProperty("关键字")
     private String condition;
+    @ApiModelProperty("所属系统")
+    private String system;
+
+    public String getSystem() {
+        return system;
+    }
+
+    public void setSystem(String system) {
+        this.system = system;
+    }
 
     public String getCondition() {
         return condition;

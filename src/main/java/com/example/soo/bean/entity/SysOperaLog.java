@@ -33,23 +33,21 @@ public class SysOperaLog implements Serializable {
     @TableField("visit_ip")
     @ApiModelProperty("访问者IP")
     private String visitIp;
-    @TableField("operation_time")
+    @TableField("create_time")
     @ApiModelProperty("访问时间")
-    private Date operationTime;
-    @TableField("operat_status")
+    private Date createTime;
+    @TableField("status")
     @ApiModelProperty("操作状态")
-    private String operatStatus;
-    @TableField("handler_time")
+    private String status;
+    @TableField("takeup_time")
     @ApiModelProperty("响应时间")
-    private Long handlerTime;
-
-    public Long getHandlerTime() {
-        return handlerTime;
-    }
-
-    public void setHandlerTime(Long handlerTime) {
-        this.handlerTime = handlerTime;
-    }
+    private Long takeupTime;
+    @TableField("referer")
+    @ApiModelProperty("访问来源")
+    private String referer;
+    @TableField("user_id")
+    @ApiModelProperty("用户Id")
+    private String userId;
 
     public String getId() {
         return id;
@@ -83,14 +81,6 @@ public class SysOperaLog implements Serializable {
         this.className = className;
     }
 
-    public Date getOperationTime() {
-        return operationTime;
-    }
-
-    public void setOperationTime(Date operationTime) {
-        this.operationTime = operationTime;
-    }
-
     public String getVisitIp() {
         return visitIp;
     }
@@ -99,14 +89,36 @@ public class SysOperaLog implements Serializable {
         this.visitIp = visitIp;
     }
 
-    public String getOperatStatus() {
-        return operatStatus;
+    public Date getCreateTime() {
+        return createTime;
     }
-
-    public void setOperatStatus(String operatStatus) {
-        this.operatStatus = operatStatus;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
-
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    public String getUserId() {
+        return userId;
+    }
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+    public String getReferer() {
+        return referer;
+    }
+    public void setReferer(String referer) {
+        this.referer = referer;
+    }
+    public Long getTakeupTime() {
+        return takeupTime;
+    }
+    public void setTakeupTime(Long takeupTime) {
+        this.takeupTime = takeupTime;
+    }
     @Override
     public String toString() {
         return "SysOperaLog{" +
@@ -115,9 +127,11 @@ public class SysOperaLog implements Serializable {
                 ", methodName='" + methodName + '\'' +
                 ", className='" + className + '\'' +
                 ", visitIp='" + visitIp + '\'' +
-                ", operationTime=" + operationTime +
-                ", operatStatus='" + operatStatus + '\'' +
-                ", handlerTime=" + handlerTime +
+                ", createTime=" + createTime +
+                ", status='" + status + '\'' +
+                ", referer='" + referer + '\'' +
+                ", userId='" + userId + '\'' +
+                ", takeupTime=" + takeupTime +
                 '}';
     }
 }

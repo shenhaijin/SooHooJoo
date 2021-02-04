@@ -4,9 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.example.soo.bean.dto.MenuDTO;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @Author shenhaijin
@@ -15,7 +15,7 @@ import java.util.Date;
  * @Version 1.0
  **/
 @TableName("sys_menu")
-public class SysMenu implements Serializable {
+public class SysMenu extends BaseEntity implements Serializable {
     @TableId(type = IdType.UUID)
     private String id;
     @TableField("menu_name")
@@ -24,11 +24,33 @@ public class SysMenu implements Serializable {
     private String menuPath;
     @TableField("menu_type")
     private String menuType;
-    @TableField("create_time")
-    private Date createTime;
-    @TableField("update_time")
-    private Date updateTime;
+    @TableField("system")
+    private String system;
+    @TableField("parent_id")
+    private String parentId;
+    @TableField("level")
+    private String level;
 
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public String getSystem() {
+        return system;
+    }
+    public void setSystem(String system) {
+        this.system = system;
+    }
+    public String getParentId() {
+        return parentId;
+    }
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
     public String getMenuType() {
         return menuType;
     }
@@ -61,28 +83,17 @@ public class SysMenu implements Serializable {
         this.menuPath = menuPath;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
     @Override
     public String toString() {
         return "SysMenu{" +
                 "id='" + id + '\'' +
                 ", menuName='" + menuName + '\'' +
                 ", menuPath='" + menuPath + '\'' +
+                ", menuType='" + menuType + '\'' +
+                ", system='" + system + '\'' +
+                ", parentId='" + parentId + '\'' +
+                ", level='" + level + '\'' +
+                ", userId='" + userId + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';

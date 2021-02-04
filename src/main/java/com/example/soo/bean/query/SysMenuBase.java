@@ -19,6 +19,35 @@ public class SysMenuBase implements QueryConvert<SysMenu> {
     protected String menuPath;
     @ApiModelProperty("菜单类型")
     protected String menuType;
+    @ApiModelProperty("所属系统")
+    protected String system;
+    @ApiModelProperty("父菜单Id")
+    protected String parentId;
+    @ApiModelProperty("菜单层级")
+    protected String level;
+    public String getSystem() {
+        return system;
+    }
+
+    public String getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public void setSystem(String system) {
+        this.system = system;
+    }
 
     public String getMenuName() {
         return menuName;
@@ -50,6 +79,9 @@ public class SysMenuBase implements QueryConvert<SysMenu> {
         sysMenu.setMenuName(this.menuName);
         sysMenu.setMenuPath(this.menuPath);
         sysMenu.setMenuType(this.menuType);
+        sysMenu.setSystem(this.system);
+        sysMenu.setParentId(this.parentId);
+        sysMenu.setLevel(this.level);
         return sysMenu;
     }
 }

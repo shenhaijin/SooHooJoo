@@ -14,6 +14,7 @@ import com.example.soo.service.ISysMenuService;
 import com.example.soo.service.ISysUserService;
 import com.example.soo.service.impl.SysOperaLogService;
 import com.example.soo.util.JWTUtil;
+import com.example.soo.util.ReqUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -25,12 +26,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
 import java.util.Date;
 import java.util.List;
 
@@ -58,16 +56,17 @@ public class GloalAspect {
     @Around("pointCut()")
     public Object around(ProceedingJoinPoint proceedingJoinPoint) {
         SysOperaLog sysOperaLog = new SysOperaLog();
-        sysOperaLog.setOperatStatus(OperatStatus.FAIL.getCode());
+        sysOperaLog.setStatus(OperatStatus.FAIL.getCode());
         Signature signature = proceedingJoinPoint.getSignature();
         Method method = ((MethodSignature) signature).getMethod();
         sysOperaLog.setMethodName(method.getName());
         sysOperaLog.setClassName(signature.getDeclaringType().getName());
         long startTime = System.currentTimeMillis();
-        sysOperaLog.setOperationTime(new Date(startTime));
+        sysOperaLog.setCreateTime(new Date(startTime));
         Object responseObj = null;
+        HttpServletRequest httpServletRequest = ReqUtil.getRequest();
         try {
-            checkUserMenuAuth(sysOperaLog,method);
+            checkUserMenuAuth(sysOperaLog,method,httpServletRequest);
             responseObj = proceedingJoinPoint.proceed();
         }catch (SooException sooException){
             sooException.printStackTrace();
@@ -83,32 +82,32 @@ public class GloalAspect {
                 Result backResult = (Result) responseObj;
                 String code = backResult.getCode();
                 if(ExceptionCode.SUCCESS.getExceCode().equalsIgnoreCase(code)){
-                    sysOperaLog.setOperatStatus(OperatStatus.SUCCESS.getCode());
+                    sysOperaLog.setStatus(OperatStatus.SUCCESS.getCode());
                 }
             }
             long endTime = System.currentTimeMillis();
-            sysOperaLog.setHandlerTime(endTime - startTime);
-            writeSysOperaLog(sysOperaLog);
+            sysOperaLog.setTakeupTime(endTime - startTime);
+            writeSysOperaLog(sysOperaLog,httpServletRequest);
         }
         return responseObj;
     }
 
-    private void checkUserMenuAuth(SysOperaLog sysOperaLog,Method method) throws Exception{
+    private void checkUserMenuAuth(SysOperaLog sysOperaLog,Method method,HttpServletRequest httpServletRequest) throws Exception{
         if(method.isAnnotationPresent(CtrlAop.class)){
             CtrlAop ctrlAop = method.getAnnotation(CtrlAop.class);
             boolean isNeedCheckAuth = ctrlAop.isNeedCheckAuth();
             if(isNeedCheckAuth){
-                ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-                HttpServletRequest httpServletRequest = servletRequestAttributes.getRequest();
-                String authToken = httpServletRequest.getHeader(ACCESS_TOKEN_KEY);
+                String authToken = ReqUtil.getHeader(httpServletRequest,ACCESS_TOKEN_KEY);
                 if(StringUtils.isEmpty(authToken)){
                     throw new AuthException("token为空");
                 }
                 JWTUtil.verifyToken(authToken);
-                SysUser sysUser = sysUserService.sel(JWTUtil.getUserId(authToken));
+                String userId = JWTUtil.getUserId(authToken);
+                SysUser sysUser = sysUserService.sel(userId);
                 if(ObjectUtils.isEmpty(sysUser)){
                     throw new AuthException("token无效");
                 }
+                sysOperaLog.setUserId(userId);
                 sysOperaLog.setOperator(sysUser.getUserName());
                 String superAdmin = sysUser.getSuperAdmin();
                 //非超级管理员需要权限
@@ -135,45 +134,18 @@ public class GloalAspect {
         }
     }
 
-    private void writeSysOperaLog(SysOperaLog sysOperaLog)  {
+    private void writeSysOperaLog(SysOperaLog sysOperaLog,HttpServletRequest httpServletRequest)  {
         try {
-            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            HttpServletRequest httpServletRequest = servletRequestAttributes.getRequest();
-            String reqPath = httpServletRequest.getServletPath();
+            String reqPath = ReqUtil.getReqPath(httpServletRequest);
             if(!SYS_OPERA_PATH.equals(reqPath)){
-                String visitIp = getRealIp(httpServletRequest);
+                String visitIp = ReqUtil.getRealIp(httpServletRequest);
+                String referer = ReqUtil.getHeader(httpServletRequest,"referer");
                 sysOperaLog.setVisitIp(visitIp);
+                sysOperaLog.setReferer(referer);
                 sysOperaLogService.saveSysOperaLog(sysOperaLog);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    private String getRealIp(HttpServletRequest httpServletRequest) throws Exception{
-        String ipAddress = httpServletRequest.getHeader("x-forwarded-for");
-        if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = httpServletRequest.getHeader("Proxy-Client-IP");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = httpServletRequest.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
-            ipAddress = httpServletRequest.getRemoteAddr();
-            if ("127.0.0.1".equals(ipAddress) || "0:0:0:0:0:0:0:1".equals(ipAddress)) {
-                // 根据网卡取本机配置的IP
-                ipAddress = InetAddress.getLocalHost().getHostAddress();
-            }
-        }
-        // 对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
-        // "***.***.***.***".length()
-        if (ipAddress != null && ipAddress.length() > 15) {
-            // = 15
-            if (ipAddress.indexOf(",") > 0) {
-                ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
-            }
-        }
-        return ipAddress;
-    }
-
 }

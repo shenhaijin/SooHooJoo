@@ -1,6 +1,8 @@
 package com.example.soo.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -25,7 +27,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,15 +50,13 @@ public class SysRoleService extends ServiceImpl<SysRoleMenuMapper,SysRoleMenu> i
             throw new ParamException("菜单列表为空");
         }
         String roleName = sysRoleMenuBase.getRoleName();
-        QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("role_name",roleName);
-        List<SysRole> roleList = sysRoleMapper.selectList(queryWrapper);
+        LambdaQueryWrapper<SysRole> lambdaQueryWrapper = new QueryWrapper<SysRole>().lambda();
+        lambdaQueryWrapper.eq(SysRole::getRoleName,roleName);
+        List<SysRole> roleList = sysRoleMapper.selectList(lambdaQueryWrapper);
         if(!CollectionUtils.isEmpty(roleList)){
             throw new ResultException("角色名已存在");
         }
         SysRole sysRole = new SysRole();
-        sysRole.setCreateTime(new Date());
-        sysRole.setUpdateTime(sysRole.getCreateTime());
         sysRole.setRoleName(roleName);
         int number = sysRoleMapper.insert(sysRole);
         if(number < 1){
@@ -83,13 +82,12 @@ public class SysRoleService extends ServiceImpl<SysRoleMenuMapper,SysRoleMenu> i
         if(!StringUtils.isEmpty(sysRoleMenuUpdate.getRoleName())){
             sysRole.setRoleName(sysRoleMenuUpdate.getRoleName());
         }
-        sysRole.setUpdateTime(new Date());
         int number = sysRoleMapper.updateById(sysRole);
         if(number < 1){
             throw new ResultException("编辑角色失败！");
         }
-        UpdateWrapper<SysRoleMenu> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("role_id",sysRoleMenuUpdate.getRoleId());
+        LambdaUpdateWrapper<SysRoleMenu> updateWrapper = new UpdateWrapper<SysRoleMenu>().lambda();
+        updateWrapper.eq(SysRoleMenu::getRoleId,sysRoleMenuUpdate.getRoleId());
         this.remove(updateWrapper);
         saveCommon(sysRoleMenuUpdate.getMenuList(),sysRoleMenuUpdate.getRoleId());
         return true;
@@ -97,13 +95,13 @@ public class SysRoleService extends ServiceImpl<SysRoleMenuMapper,SysRoleMenu> i
 
     @Override
     public PageHelper<SysRole> pageRole(QueryRolePage queryRolePage) throws Exception {
-        QueryWrapper<SysRole> wrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<SysRole> lambdaQueryWrapper = new QueryWrapper<SysRole>().lambda();
         if(!StringUtils.isEmpty(queryRolePage.getRoleName())){
-            wrapper.like("role_name",queryRolePage.getRoleName());
+            lambdaQueryWrapper.like(SysRole::getRoleName,queryRolePage.getRoleName());
         }
-        wrapper.orderByDesc("update_time");
+        lambdaQueryWrapper.orderByDesc(SysRole::getUpdateTime);
         IPage<SysRole> sysRoleIPage = new Page(queryRolePage.getPageIndex(),queryRolePage.getPageSize());
-        sysRoleIPage = sysRoleMapper.selectPage(sysRoleIPage,wrapper);
+        sysRoleIPage = sysRoleMapper.selectPage(sysRoleIPage,lambdaQueryWrapper);
         PageHelper<SysRole> sooPage = ConvertUtil.mybatisPageConvertPageHelper(sysRoleIPage);
         return sooPage;
     }
@@ -115,8 +113,8 @@ public class SysRoleService extends ServiceImpl<SysRoleMenuMapper,SysRoleMenu> i
             /**
              * 删除菜单关联表记录
              */
-            UpdateWrapper<SysRoleMenu> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.eq("role_id",roleId);
+            LambdaUpdateWrapper<SysRoleMenu> updateWrapper = new UpdateWrapper<SysRoleMenu>().lambda();
+            updateWrapper.eq(SysRoleMenu::getRoleId, roleId);
             this.remove(updateWrapper);
         }
         return true;

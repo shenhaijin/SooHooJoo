@@ -1,6 +1,8 @@
 package com.example.soo.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -40,14 +42,15 @@ public class SysUserService implements ISysUserService {
     SysUserRoleMapper sysUserRoleMapper;
     @Override
     public SysUser findOneUser(String userName, String passWord) throws Exception{
-        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_name",userName);
-        queryWrapper.eq("pass_word",passWord);
-        SysUser User = sysUserMapper.selectOne(queryWrapper);
+        LambdaQueryWrapper<SysUser> lambdaQueryWrapper = new QueryWrapper<SysUser>().lambda();
+        lambdaQueryWrapper.eq(SysUser::getUserName,userName);
+        lambdaQueryWrapper.eq(SysUser::getPassWord,passWord);
+        SysUser User = sysUserMapper.selectOne(lambdaQueryWrapper);
         return User;
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SysUser sel(String id) throws Exception {
         SysUser user = sysUserMapper.selectById(id);
         if(user == null ){
@@ -62,17 +65,18 @@ public class SysUserService implements ISysUserService {
     public boolean deleteUser(String userId) throws Exception{
         if(!StringUtils.isEmpty(userId)){
             sysUserMapper.deleteById(userId);
-            UpdateWrapper<SysUserRole> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.eq("user_id",userId);
-            sysUserRoleMapper.delete(updateWrapper);
+            LambdaUpdateWrapper<SysUserRole> lambdaUpdateWrapper = new UpdateWrapper<SysUserRole>().lambda();
+            lambdaUpdateWrapper.eq(SysUserRole::getUserId,userId);
+            sysUserRoleMapper.delete(lambdaUpdateWrapper);
         }
         return true;
     }
     @Override
     public List<SysUser> getListUser() throws Exception{
+        LambdaQueryWrapper<SysUser> lambdaQueryWrapper = new QueryWrapper<SysUser>().lambda();
         QueryWrapper<SysUser> userEntityWrapper = new QueryWrapper<>();
-        userEntityWrapper.isNotNull("real_name");
-        userEntityWrapper.ne("real_name","");
+        lambdaQueryWrapper.isNotNull(SysUser::getRealName);
+        lambdaQueryWrapper.ne(SysUser::getRealName,"");
         List<SysUser> userList = sysUserMapper.selectList(userEntityWrapper);
         return userList;
     }
@@ -89,9 +93,9 @@ public class SysUserService implements ISysUserService {
         if(StringUtils.isEmpty(sysUserBase.getPassWord())){
             throw new ParamException("密码为空");
         }
-        QueryWrapper<SysUser> userEntityWrapper = new QueryWrapper<>();
-        userEntityWrapper.eq("user_name",sysUserBase.getUserName());
-        List<SysUser> userList = sysUserMapper.selectList(userEntityWrapper);
+        LambdaQueryWrapper<SysUser> lambdaQueryWrapper = new QueryWrapper<SysUser>().lambda();
+        lambdaQueryWrapper.eq(SysUser::getUserName,sysUserBase.getUserName());
+        List<SysUser> userList = sysUserMapper.selectList(lambdaQueryWrapper);
         if(!CollectionUtils.isEmpty(userList)){
             throw new ResultException("用户名存在");
         }
@@ -142,13 +146,13 @@ public class SysUserService implements ISysUserService {
 
     @Override
     public PageHelper<SysUser> pageUser(Long pageIndex, Long pageSize, String userName) throws Exception{
-        QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<SysUser> lambdaQueryWrapper = new QueryWrapper<SysUser>().lambda();
         if(!StringUtils.isEmpty(userName)){
-            wrapper.like("user_name",userName);
+            lambdaQueryWrapper.like(SysUser::getUserName,userName);
         }
-        wrapper.orderByDesc("update_time");
+        lambdaQueryWrapper.orderByDesc(SysUser::getUpdateTime);
         IPage<SysUser> userPage = new Page(pageIndex,pageSize);
-        userPage = sysUserMapper.selectPage(userPage,wrapper);
+        userPage = sysUserMapper.selectPage(userPage,lambdaQueryWrapper);
         PageHelper<SysUser> sooPage = ConvertUtil.mybatisPageConvertPageHelper(userPage);
         return sooPage;
     }

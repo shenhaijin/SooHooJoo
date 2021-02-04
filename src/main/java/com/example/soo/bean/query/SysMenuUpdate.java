@@ -28,17 +28,4 @@ public class SysMenuUpdate extends SysMenuBase {
         sysMenu.setId(this.menuId);
         return sysMenu;
     }
-
-    public SysMenu convert(SysMenu sysMenu){
-        if(!StringUtils.isEmpty(this.menuName)){
-            sysMenu.setMenuName(this.menuName);
-        }
-        if(!StringUtils.isEmpty(this.menuPath)){
-            sysMenu.setMenuPath(this.menuPath);
-        }
-        if(!StringUtils.isEmpty(this.menuType)){
-            sysMenu.setMenuType(this.menuType);
-        }
-        return sysMenu;
-    }
 }

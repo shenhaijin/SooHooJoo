@@ -1,6 +1,8 @@
 package com.example.soo.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,7 +26,6 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,9 +53,9 @@ public class SysTaskService implements ISysTaskService {
         }
         SysTaskConfig sysTaskConfig = sysTaskConfigMapper.selectById(taskId);
         if(!ObjectUtils.isEmpty(sysTaskConfig)){
-            UpdateWrapper<SysTaskConfig> updateWrapper = new UpdateWrapper<>();
-            updateWrapper.eq("id",taskId);
-            sysTaskConfigMapper.delete(updateWrapper);
+            LambdaUpdateWrapper<SysTaskConfig> lambdaUpdateWrapper = new UpdateWrapper<SysTaskConfig>().lambda();
+            lambdaUpdateWrapper.eq(SysTaskConfig::getId,taskId);
+            sysTaskConfigMapper.delete(lambdaUpdateWrapper);
             jobManager.deleteJob(sysTaskConfig);
         }
         return true;
@@ -77,18 +78,16 @@ public class SysTaskService implements ISysTaskService {
         if(StringUtils.isEmpty(taskCron)){
             throw new ParamException("cron为空");
         }
-        QueryWrapper<SysTaskConfig> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("task_class",className);
-        queryWrapper.or();
-        queryWrapper.eq("task_name",taskName);
-        List<SysTaskConfig> sysTaskConfigList = sysTaskConfigMapper.selectList(queryWrapper);
+        LambdaQueryWrapper<SysTaskConfig> lambdaQueryWrapper = new QueryWrapper<SysTaskConfig>().lambda();
+        lambdaQueryWrapper.eq(SysTaskConfig::getTaskClass,className);
+        lambdaQueryWrapper.or();
+        lambdaQueryWrapper.eq(SysTaskConfig::getTaskName,taskName);
+        List<SysTaskConfig> sysTaskConfigList = sysTaskConfigMapper.selectList(lambdaQueryWrapper);
         if(!CollectionUtils.isEmpty(sysTaskConfigList)){
             throw new ResultException("任务名或任务执行类已存在");
         }
         SysTaskConfig sysTaskConfig = new SysTaskConfig();
         BeanUtils.copyProperties(taskBase,sysTaskConfig);
-        sysTaskConfig.setCreateTime(new Date());
-        sysTaskConfig.setUpdateTime(sysTaskConfig.getCreateTime());
         int number = sysTaskConfigMapper.insert(sysTaskConfig);
         if(number < 1){
             throw new ResultException("保存失败");
@@ -123,7 +122,6 @@ public class SysTaskService implements ISysTaskService {
         if(!StringUtils.isEmpty(taskUpdate.getTaskStatus())){
             curSysTaskConfig.setTaskStatus(taskUpdate.getTaskStatus());
         }
-        curSysTaskConfig.setUpdateTime(new Date());
         int number = sysTaskConfigMapper.updateById(curSysTaskConfig);
         if(number < 1){
             throw new ResultException("修改失败");
@@ -133,13 +131,13 @@ public class SysTaskService implements ISysTaskService {
     }
     @Override
     public PageHelper<SysTaskConfig> findTaskPage(Long pageIndex, Long pageSize, String taskName) throws Exception{
-        QueryWrapper<SysTaskConfig> wrapper = new QueryWrapper<>();
+        LambdaQueryWrapper<SysTaskConfig> lambdaQueryWrapper = new QueryWrapper<SysTaskConfig>().lambda();
         if(!StringUtils.isEmpty(taskName)){
-            wrapper.like("task_name",taskName);
+            lambdaQueryWrapper.like(SysTaskConfig::getTaskName,taskName);
         }
-        wrapper.orderByDesc("create_time");
+        lambdaQueryWrapper.orderByDesc(SysTaskConfig::getCreateTime);
         IPage<SysTaskConfig> sysTaskPage = new Page(pageIndex,pageSize);
-        sysTaskPage = sysTaskConfigMapper.selectPage(sysTaskPage,wrapper);
+        sysTaskPage = sysTaskConfigMapper.selectPage(sysTaskPage,lambdaQueryWrapper);
         PageHelper<SysTaskConfig> sooPage = ConvertUtil.mybatisPageConvertPageHelper(sysTaskPage);
         return sooPage;
     }
@@ -151,7 +149,6 @@ public class SysTaskService implements ISysTaskService {
         if(RunStatus.PAUSE.getCode().equals(sysTaskConfig.getTaskStatus())){
             throw new ResultException("当前任务已暂停！");
         }
-        sysTaskConfig.setUpdateTime(new Date());
         sysTaskConfig.setTaskStatus(RunStatus.PAUSE.getCode());
         int number = sysTaskConfigMapper.updateById(sysTaskConfig);
         if (number < 1){
@@ -167,7 +164,6 @@ public class SysTaskService implements ISysTaskService {
         if(RunStatus.RUN.getCode().equals(sysTaskConfig.getTaskStatus())){
             throw new ResultException("当前任务已运行！");
         }
-        sysTaskConfig.setUpdateTime(new Date());
         sysTaskConfig.setTaskStatus(RunStatus.RUN.getCode());
         int number = sysTaskConfigMapper.updateById(sysTaskConfig);
         if (number < 1){

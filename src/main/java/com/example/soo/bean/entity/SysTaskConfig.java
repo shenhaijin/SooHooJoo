@@ -19,7 +19,7 @@ import java.util.Objects;
  **/
 @TableName("sys_task_config")
 @ApiModel("定时任务对象")
-public class SysTaskConfig implements Serializable {
+public class SysTaskConfig extends BaseEntity implements Serializable {
     @TableId(type = IdType.UUID)
     private String id;
     @TableField("task_name")
@@ -45,14 +45,6 @@ public class SysTaskConfig implements Serializable {
     @TableField("task_group")
     @ApiModelProperty("任务组")
     private String taskGroup;
-
-    @TableField("create_time")
-    @ApiModelProperty("任务创建时间")
-    private Date createTime;
-
-    @TableField("update_time")
-    @ApiModelProperty("任务修改时间")
-    private Date updateTime;
 
     public String getId() {
         return id;
@@ -110,22 +102,6 @@ public class SysTaskConfig implements Serializable {
         this.taskGroup = taskGroup;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
     @Override
     public String toString() {
         return "SysTaskConfig{" +
@@ -136,6 +112,7 @@ public class SysTaskConfig implements Serializable {
                 ", taskStatus='" + taskStatus + '\'' +
                 ", taskExplain='" + taskExplain + '\'' +
                 ", taskGroup='" + taskGroup + '\'' +
+                ", userId='" + userId + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';
